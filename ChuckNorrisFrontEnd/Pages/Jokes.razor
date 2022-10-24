@@ -1,0 +1,52 @@
+﻿@page "/jokes"
+@using ChuckNorrisFrontEnd.Models
+@inject HttpClient HttpClient
+
+<PageTitle>Counter</PageTitle>
+
+
+
+<MudText Align="Align.Center" Typo="Typo.h3" Style="font-family : Cursive" GutterBottom="true">Programming Jokes</MudText>
+    <hr/>
+    <PageTitle>Jokes</PageTitle>
+
+
+@if(jokesResponse == null)
+{
+    <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Class="border-double border-4 mud-border-primary pa-4" Elevation="0">
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                    <MudText Align="Align.Center" Typo="Typo.body1" Style="font-family : Copperplate"><em>@jokesResponse.setup</em></MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+                <MudText Align="Align.Center" Typo="Typo.body2" Style="font-family : 'Lucida Console'"><strong>@jokesResponse.delivery</strong></MudText>
+        </MudCardContent>
+            <MudCardActions>
+                <MudButton OnClick="GetJokes" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Secondary" Size="Size.Large">Refresh</MudButton>
+            </MudCardActions>
+    </MudCard>
+    </MudPaper>
+    
+}
+
+@code {
+    // Response
+    protected JokesResponse jokesResponse = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetJokes();
+    }
+
+    protected  async Task GetJokes()
+    {
+        jokesResponse = await HttpClient.GetFromJsonAsync<JokesResponse>("https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=twopart");
+    }
+
+}
